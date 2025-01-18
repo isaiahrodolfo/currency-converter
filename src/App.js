@@ -3,18 +3,17 @@ import { useState, useEffect } from "react";
 // `https://api.frankfurter.app/latest?amount=100&from=EUR&to=USD`
 
 export default function App() {
-  const [currencyBefore, setCurrencyBefore] = useState("");
+  const [currencyBefore, setCurrencyBefore] = useState(100);
+  const [currencyAfter, setCurrencyAfter] = useState(null);
 
   const [currencyFrom, setCurrencyFrom] = useState("USD");
   const [currencyTo, setCurrencyTo] = useState("EUR");
-
-  const [multiplier, setMultiplier] = useState("");
 
   useEffect(() => {
     const getMultiplier = async () => {
       const res = await fetch(`https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`);
       const data = await res.json();
-      setMultiplier(data.rates[currencyFrom]);
+      setCurrencyAfter(Number(data.rates[currencyTo]).toFixed(2));
     }
     getMultiplier();
   }, [currencyBefore, currencyFrom, currencyTo])
@@ -44,7 +43,7 @@ export default function App() {
         <option value="CAD">CAD</option>
         <option value="INR">INR</option>
       </select>
-      <p>{multiplier}</p>
+      <p>{currencyAfter}</p>
     </div>
   );
 }

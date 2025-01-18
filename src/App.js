@@ -9,13 +9,29 @@ export default function App() {
   const [currencyFrom, setCurrencyFrom] = useState("USD");
   const [currencyTo, setCurrencyTo] = useState("EUR");
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     const getMultiplier = async () => {
-      const res = await fetch(`https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`);
-      const data = await res.json();
-      setCurrencyAfter(Number(data.rates[currencyTo]).toFixed(2));
+      try {
+        setError("");
+        setIsLoading(true);
+        const res = await fetch(`https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`);
+        const data = await res.json();
+        setCurrencyAfter(Number(data.rates[currencyTo]).toFixed(2));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    getMultiplier();
+
+    if (currencyBefore > 0) {
+      getMultiplier();
+    } else {
+      setCurrencyAfter(0);
+    }
   }, [currencyBefore, currencyFrom, currencyTo])
 
   return (
@@ -43,7 +59,11 @@ export default function App() {
         <option value="CAD">CAD</option>
         <option value="INR">INR</option>
       </select>
-      <p>{currencyAfter}</p>
+      <p>
+        {isLoading && "loading"}  {/* loading */}
+        {error}   {/* error */}
+        {!isLoading && !error && currencyAfter}   {/* success */}
+      </p>
     </div>
   );
 }

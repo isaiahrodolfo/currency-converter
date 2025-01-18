@@ -13,15 +13,22 @@ export default function App() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const getMultiplier = async () => {
       try {
         setError("");
         setIsLoading(true);
-        const res = await fetch(`https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`);
+        const res = await fetch(
+          `https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`,
+          { signal: controller.signal }
+        );
         const data = await res.json();
         setCurrencyAfter(Number(data.rates[currencyTo]).toFixed(2));
       } catch (err) {
-        setError(err.message);
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -31,6 +38,10 @@ export default function App() {
       getMultiplier();
     } else {
       setCurrencyAfter(0);
+    }
+
+    return () => {
+      controller.abort();
     }
   }, [currencyBefore, currencyFrom, currencyTo])
 

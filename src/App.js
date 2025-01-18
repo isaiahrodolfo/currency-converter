@@ -50,11 +50,16 @@ export default function App() {
       <input
         type="number"
         value={currencyBefore}
-        onChange={(e) => setCurrencyBefore(e.target.value)}
+        onChange={(e) => { setCurrencyBefore(e.target.value) }}
       />
       <select
         value={currencyFrom}
-        onChange={(e) => setCurrencyFrom(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (currencyTo !== value) {
+            setCurrencyFrom(e.target.value)
+          }
+        }}
       >
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
@@ -63,7 +68,12 @@ export default function App() {
       </select>
       <select
         value={currencyTo}
-        onChange={(e) => setCurrencyTo(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (currencyFrom !== value) {
+            setCurrencyTo(e.target.value)
+          }
+        }}
       >
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>

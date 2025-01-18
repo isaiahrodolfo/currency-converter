@@ -17,8 +17,8 @@ export default function App() {
 
     const getMultiplier = async () => {
       try {
-        setError("");
         setIsLoading(true);
+        setError("");
         const res = await fetch(
           `https://api.frankfurter.app/latest?amount=${currencyBefore}&from=${currencyFrom}&to=${currencyTo}`,
           { signal: controller.signal }
@@ -54,6 +54,7 @@ export default function App() {
       />
       <select
         value={currencyFrom}
+        disabled={isLoading}
         onChange={(e) => {
           const value = e.target.value;
           if (currencyTo !== value) {
@@ -68,6 +69,7 @@ export default function App() {
       </select>
       <select
         value={currencyTo}
+        disabled={isLoading}
         onChange={(e) => {
           const value = e.target.value;
           if (currencyFrom !== value) {
